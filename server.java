@@ -28,17 +28,24 @@ public class server {
 					String ch; // la chaîne reçue
 					ch = entree.readLine(); // on lit ce qui arrive
 					System.out.println(ch);
-					for(ClientHandler oc : server.clients){
-						if(oc.isAlive() && oc != this){
-							System.out.println("sending "+ch);
-							oc.sortie.writeUTF("client "+num+" :"+ch+"\n");
+					if(ch.equals("logout")) {
+						//entree.close();
+						sortie.writeUTF("logout");
+						//sortie.close();
+						s.close();
+						return;
+					} else {
+						for(ClientHandler oc : server.clients){
+							if(oc.isAlive() && oc != this){
+								System.out.println("sending "+ch);
+								oc.sortie.writeUTF("client "+num+" : "+ch+"\n");
+							}
 						}
 					}
 					
 				} catch (IOException e) {
 					System.out.println("problème\n"+e);
 				}
-
 		}
 
 	}
@@ -48,11 +55,6 @@ public class server {
 		int p; // le port d’écoute
 		ServerSocket ecoute;
 		Socket so;
-
-
-
-//		BufferedReader entree;
-//		DataOutputStream sortie;
 	
 		if (argu.length == 1) {
 		

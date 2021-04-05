@@ -18,8 +18,13 @@ public class client {
 				String msg = scn.nextLine();
 				try {
 					send.println(msg);
+					if(msg.equals("logout")) {
+						//send.close();
+						return;
+					}
 				} catch (Exception e){
 					System.out.println("Sender PB");
+					return;
 				}
 			}
 		}
@@ -34,9 +39,16 @@ public class client {
 			while(true){
 				try {
 					String msg = recieve.readLine();
+					if(msg.equals("logout")) {
+						recieve.close();
+						return;
+					}
+					/*
+					*/
 					System.out.println(msg);
 				} catch (IOException e){
-					System.out.println("Reciever PB");
+					System.out.println("Reciever PB: "+e);
+					return;
 				}
 			}
 		}
@@ -61,9 +73,22 @@ public class client {
 				sortie = new Sender		(new PrintWriter(so.getOutputStream(), true));
 				entree = new Reciever	(new BufferedReader(new InputStreamReader(so.getInputStream())));
 				
-				sortie.start();
 				entree.start();
+				sortie.start();
 
+				try {
+					sortie.join();
+					entree.join();
+					//entree.stop(); //depreciated
+				} catch (Exception e) {
+				}
+				//System.out.println("Closing reciever");
+				//entree.recieve.close();
+				//System.out.println("Closing sender");
+				//sortie.send.close();
+				//System.out.println("Closing socket");
+				so.close();
+				System.out.println("Closed");
 
 			} catch(UnknownHostException e) { 
 				System.out.println(e);
